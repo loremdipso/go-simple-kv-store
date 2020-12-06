@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
+	"github.com/mattn/go-shellwords"
 	"github.com/tidwall/buntdb"
 )
 
@@ -33,6 +36,25 @@ func (store *KVStore) Close() {
 	// NOTE: this takes up some time, so maybe don't do it always?
 	// Or, maybe do it synchronously?
 	store.bdb.Close()
+}
+
+// Interactive prompt
+func (store *KVStore) Interactive() {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Printf("> ")
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			return
+		}
+
+		args, err := shellwords.Parse(line)
+		if err != nil {
+			return
+		}
+
+		store.Parse(args)
+	}
 }
 
 // Parse some key-store queries

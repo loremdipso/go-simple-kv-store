@@ -15,6 +15,12 @@ func main() {
 		log.Println("{}", err)
 	} else {
 		defer store.Close()
-		store.Parse(os.Args[1:])
+
+		// go interactive if args is empty
+		if len(os.Args) == 1 {
+			store.Interactive()
+		} else {
+			store.Parse(os.Args[1:])
+		}
 	}
 }
